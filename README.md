@@ -15,6 +15,7 @@
 | **Category**        | **Technology Stack**     |
 | ------------------- | ------------------------ |
 | **Backend**         | Node.js, NestJS, Express |
+| **Language**        | Typescript               |
 | **Database**        | MySQL                    |
 | **ORM**             | TypeORM                  |
 | **Security**        | bcrypt, JWT              |
