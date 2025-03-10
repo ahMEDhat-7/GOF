@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HoldersController } from './holders.controller';
 import { HoldersService } from './holders.service';
-import { Holder } from './holders.entity';
+import { Holder } from './entities/holders.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Holder])],

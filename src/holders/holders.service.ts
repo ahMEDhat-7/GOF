@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Holder } from './holders.entity';
+import { Holder } from './entities/holders.entity';
 import { CreateHolderDto } from './dtos/create-holder.dto';
 import { UpdateHolderDto } from './dtos/update-holder.dto';
 
@@ -13,6 +17,13 @@ export class HoldersService {
   ) {}
 
   async create(dto: CreateHolderDto): Promise<Holder> {
+    const holderExt = await this.findByName(dto.name);
+    if (holderExt) {
+      throw new BadRequestException(
+        `Holder with name "${dto.name}" already has admin`,
+      );
+    }
+
     const holder = this.holdersRepository.create(dto);
     return this.holdersRepository.save(holder);
   }
@@ -25,6 +36,13 @@ export class HoldersService {
     const holder = await this.holdersRepository.findOne({ where: { id } });
     if (!holder) {
       throw new NotFoundException(`Holder with ID "${id}" not found`);
+    }
+    return holder;
+  }
+  async findByName(name: string): Promise<Holder> {
+    const holder = await this.holdersRepository.findOne({ where: { name } });
+    if (!holder) {
+      throw new NotFoundException(`Holder with name "${name}" not found`);
     }
     return holder;
   }

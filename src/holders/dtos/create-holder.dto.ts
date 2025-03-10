@@ -14,7 +14,7 @@ export class CreateHolderDto {
 
   @IsNotEmpty()
   @IsString()
-  @Length(8, 16)
+  @Length(8)
   password: string;
 
   @IsOptional()
