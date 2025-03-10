@@ -45,6 +45,8 @@ nest-README.md
 .env.*
 .env.*.local
 
+# endpoints
+/api
 
 # temp directory
 .temp
