@@ -31,109 +31,76 @@
 
 ### **Functional Requirements**
 
-#### ✅ User Management
+#### 1. **User Management**
 
-- Users can register with a valid email, phone number, and password.
-- Each user belongs to a **Holder (Company/Organization)**.
-- Only **one admin per Holder** is allowed.
-- Users can be either **Admin** or **Regular Users**.
+- **Sign-Up/Registration**: Users should be able to sign up by providing their name, email, phone number, and password.
+- **Login**: Users can log in with their username and password. Admin users (with the `super` role) should have additional privileges for managing restaurants and users.
+- **Role Management**: Users can have different roles:
+  - **User**: Regular customers who can join groups, view menus, and place orders.
+  - **Super User (Admin)**: Admin users who can manage restaurants, menus, and user groups.
 
-#### ✅ Restaurant & Menu Management
+#### 2. **Restaurant Management**
 
-- Admins (Holders) can create **restaurants**.
-- Restaurants have **menus** with food items, prices, and optional images.
-- Each menu item can have customizable options.
+- **Create Restaurant**: Admins can create new restaurants with details like name, phone number, image URL, and associated restaurant users.
+- **Manage Menus**: Admins can create and manage menus, including adding, updating, or removing menu items.
+- **Menu Items**: Each menu item should include details like name, price, optional customizations (e.g., size or flavor), and image URLs.
 
-#### ✅ Group Ordering System
+#### 3. **Group Management**
 
-- Users can create **Groups** to place collective food orders.
-- Each group is associated with a **restaurant** and a **creator** (holder/user).
-- Groups have different statuses:
-  - `1 = Running`, `2 = Pending`, `3 = Completed`, `4 = Cancelled`
-- Groups have a **start date, duration, and end date**.
-- Users can **join groups** as **group members**.
+- **Create Group**: Users can create a group associated with a specific restaurant. The group’s status is set to `running` by default, but can also be `pending`, `completed`, or `cancelled`.
+- **Join Group**: Users can join an existing group created by others.
 
-#### ✅ Order & Payment Processing
+#### 4. **Order Management**
 
-- Users can place **orders** under a group.
-- Orders can have:
-  - **Delivery location (latitude/longitude)**
-- **Order status**
-  - `Running, Pending, Arrived, Completed, Cancelled`
-- Payment methods:
-  - `InstaPay, Cash`
-- Payments have statuses:
-  - `Pending, Completed, Failed`
+- **Place Orders**: Group members can place individual orders by selecting items from the restaurant's menu. Items can be customized (e.g., size or additional options).
+- **Order Status**: Orders are tracked with various statuses such as `pending`, `confirmed`, `arrived`, or `cancelled`.
+- **Order Modifications**: Users can update or cancel their orders within a specified time frame. Canceled orders can include a message indicating why the order was canceled.
 
-#### ✅ Notifications & Triggers
+#### 5. **Menu Customization**
 
-- Users receive **notifications (Email/SMS)** for order status.
-- Triggers enforce:
-  - **One admin per company**
-  - **Valid Egyptian phone numbers**
+- **Menu Item Customization**: Menu items may have configurable options such as size, toppings, or other customizations.
 
-#### ✅ Security & Integrity
+### Non-Functional Requirements
 
-- **UUIDs for primary keys** instead of auto-increment IDs.
-- **Foreign keys with cascade/delete rules** to maintain referential integrity.
-- **Validation on phone numbers and admin roles.**
+#### 1. **Performance**
 
----
+- The system should support multiple concurrent users (restaurant owners, customers, and admin users).
 
-# **2️⃣ Workflow**
+#### 2. **Security**
 
-### **1️⃣ User Registration & Authentication**
+- **Password Storage**: User passwords should be securely hashed and stored in the database.
+- **Role-Based Access Control**: Admin users should have privileges to manage restaurants, menus, and users, while regular users only have access to their groups and orders.
+- **Data Validation**: All inputs should be validated for correctness (e.g., valid email format, phone number, etc.) and security (e.g., prevent SQL injection).
 
-1. A user **registers** with email, password, phone number, and holder.
-2. The system **validates phone numbers** (if role is `user`).
-3. If an **admin is created**, it checks if another admin exists for the same holder.
-4. The user can **log in** after successful registration.
+#### 3. **Scalability**
 
----
+- The system should be able to scale horizontally to accommodate more restaurants, users, and orders as the platform grows.
+- Database design should be optimized for handling large volumes of data.
 
-### **2️⃣ Restaurant & Menu Management**
+#### 4. **Availability**
 
-1. An admin (holder) **creates a restaurant**.
-2. The restaurant can have a **menu** with items and images.
-3. Users can browse restaurants and menus.
+- The system should ensure high availability and minimal downtime, especially during peak usage hours (e.g., lunch and dinner times).
 
----
+### Technical Requirements
 
-### **3️⃣ Group Ordering Process**
+#### 1. **Backend**
 
-1. A user creates a **group** linked to a restaurant.
-2. The group has a **start date and duration**.
-3. Other users **join the group** to place orders.
-4. Orders are placed.
+- The backend should be developed using Typescript, Node.js, NestJS, and Express for a scalable, modular, and maintainable architecture.
+- RESTful APIs should be provided for communication between the frontend and backend.
 
----
+#### 2. **Frontend**
 
-### **4️⃣ Order Processing & Delivery**
+- The frontend should be built using modern web technologies React and React Native for a dynamic and responsive user interface.
+- The frontend should communicate with the backend via API endpoints to fetch and display real-time data.
 
-1. Users submit orders within an active group.
-2. Orders can have:
-   - Delivery location (latitude/longitude)
-   - Payment method (InstaPay, Cash)
-   - Status (`Running`, `Pending`, `Completed`, etc.)
-3. Notifications (SMS/Email) are sent on status updates.
+#### 3. **Database**
 
----
+- The database should use MySQL, with the ORM TypeORM to interact with the database seamlessly.
 
-### **5️⃣ Payment & Completion**
+#### 4. **Hosting**
 
-1. Users make payments.
-2. Payments are validated (`Pending, Completed, Failed`).
-3. Once the payment is confirmed, the order is finalized.
-4. The group can be **closed** after the last order is completed.
+- The system should be hosted on Vercel for easy deployment and scalability.
 
----
+#### 5. **Testing**
 
-### **6️⃣ Admin & System Rules**
-
-- Admins manage restaurants and approve groups/orders.
-- Orders and groups **auto-close** based on duration.
-- Deleted users have their data **set to NULL or cascaded** to prevent orphan records.
-
----
-
-###
+- The system should include unit tests, integration tests, and end-to-end tests to ensure stability and quality.
