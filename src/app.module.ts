@@ -15,6 +15,7 @@ import { OrderItemsModule } from './order-items/order-items.module';
 import { MenusModule } from './menus/menus.module';
 import { MenuItemsModule } from './menu-items/menu-items.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [

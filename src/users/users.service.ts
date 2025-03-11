@@ -11,6 +11,8 @@ import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HoldersService } from './../holders/holders.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +21,8 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
     @Inject(forwardRef(() => HoldersService))
     private readonly holdersService: HoldersService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
@@ -49,18 +53,19 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  /**
+   * get current user (logged in )
+   * @Param id id of user
+   * @return User data
+   */
   async findOne(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
-    if (!user) {
-      throw new NotFoundException(`User with ID "${id}" not found`);
-    }
+    if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
+
   async findByUsername(username: string) {
     const user = await this.usersRepository.findOne({ where: { username } });
-    if (!user) {
-      throw new BadRequestException(`Invalid username`);
-    }
     return user;
   }
 

@@ -1,4 +1,12 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  Headers,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
@@ -19,10 +27,12 @@ export class AuthController {
   }
 
   @Post('/admin/login')
+  @HttpCode(HttpStatus.OK)
   loginAsAdmin(@Body() userDto: loginDto) {
     return this.authService.findAdmin(userDto);
   }
   @Post('/login')
+  @HttpCode(HttpStatus.OK)
   loginAsUser(@Body() adminDto: loginDto) {
     return this.authService.findUser(adminDto);
   }

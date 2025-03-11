@@ -39,11 +39,8 @@ export class HoldersService {
     }
     return holder;
   }
-  async findByName(name: string): Promise<Holder> {
+  async findByName(name: string): Promise<Holder | null> {
     const holder = await this.holdersRepository.findOne({ where: { name } });
-    if (!holder) {
-      throw new NotFoundException(`Holder with name "${name}" not found`);
-    }
     return holder;
   }
 

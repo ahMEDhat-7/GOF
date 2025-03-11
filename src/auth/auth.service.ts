@@ -1,42 +1,81 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { HoldersService } from 'src/holders/holders.service';
 import { CreateHolderDto } from './../holders/dtos/create-holder.dto';
 import { loginDto } from './dto/login.dto';
 import * as bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayloadType, AccessTokenType } from '../utils/types';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly holdersService: HoldersService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(userDto: CreateUserDto) {
+  async createUser(userDto: CreateUserDto): Promise<AccessTokenType> {
     const { password } = userDto;
     const hashedPassword = await bcrypt.hash(password, 10);
     userDto.password = hashedPassword;
     const user = await this.usersService.create(userDto);
-    return 'TOKEN';
+    const token = await this.genJwtToken({
+      id: user.id,
+      role: 'user',
+    });
+    return { token };
   }
 
-  async createAdmin(adminDto: CreateHolderDto) {
+  async createAdmin(adminDto: CreateHolderDto): Promise<AccessTokenType> {
     const { password } = adminDto;
     const hashedPassword = await bcrypt.hash(password, 10);
     adminDto.password = hashedPassword;
     const admin = await this.holdersService.create(adminDto);
-    return 'TOKEN';
+    const token = await this.genJwtToken({
+      id: admin.id,
+      role: 'admin',
+    });
+    return { token };
   }
 
-  async findUser(userDto: loginDto) {
+  /**
+   * Login Service for user
+   * @param userDto data to login
+   * @returns JWT (access token)
+   */
+  async findUser(userDto: loginDto): Promise<AccessTokenType> {
     const { username, password } = userDto;
     const user = await this.usersService.findByUsername(username);
-    return 'TOKEN';
+    if (!user) throw new BadRequestException('Invalid username or password');
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) throw new BadRequestException('Invalid username or password');
+    const token = await this.genJwtToken({
+      id: user.id,
+      role: 'user',
+    });
+    return { token };
   }
-  async findAdmin(adminDto: loginDto) {
+  async findAdmin(adminDto: loginDto): Promise<AccessTokenType> {
     const { username, password } = adminDto;
-    const newAdmin = await this.holdersService.findByName(username);
-    return 'TOKEN';
+    const admin = await this.holdersService.findByName(username);
+    if (!admin) throw new BadRequestException('Invalid username or password');
+    const match = await bcrypt.compare(password, admin.password);
+    if (!match) throw new BadRequestException('Invaild username or password');
+
+    const token = await this.genJwtToken({
+      id: admin.id,
+      role: 'admin',
+    });
+    return { token };
+  }
+  /**
+   * JWT Service for Generating access token
+   * @param payload id , role
+   * @returns token
+   */
+  private genJwtToken(payload: JwtPayloadType) {
+    return this.jwtService.signAsync(payload);
   }
 }

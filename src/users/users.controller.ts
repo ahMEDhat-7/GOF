@@ -7,10 +7,16 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Headers,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from './guards/auth.guard';
+import { UserProfile } from './decorators/userProfile.decorator';
+import { JwtPayloadType } from 'src/utils/types';
 
 @Controller('users')
 export class UsersController {
@@ -26,9 +32,12 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.findOne(id);
+  @Get('/dashboard')
+  @UseGuards(AuthGuard)
+  findOne(@UserProfile() payload: JwtPayloadType) {
+    console.log(payload);
+    const user = this.usersService.findOne(payload.id);
+    return user;
   }
 
   @Patch(':id')
