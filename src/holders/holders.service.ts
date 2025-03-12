@@ -29,7 +29,9 @@ export class HoldersService {
   }
 
   async findAll(): Promise<Holder[]> {
-    return this.holdersRepository.find();
+    return this.holdersRepository.find({
+      select: { id: true, name: true, phoneNumber: true },
+    });
   }
 
   async findOne(id: string): Promise<Holder> {

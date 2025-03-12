@@ -4,9 +4,10 @@ import { UsersService } from 'src/users/users.service';
 import { HoldersService } from 'src/holders/holders.service';
 import { CreateHolderDto } from './../holders/dtos/create-holder.dto';
 import { loginDto } from './dto/login.dto';
-import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadType, AccessTokenType } from '../utils/types';
+import { USER_TYPE } from 'src/utils/constants';
+import { isHashMatch, hashPassword } from 'src/utils/genHash';
 
 @Injectable()
 export class AuthService {
@@ -18,24 +19,22 @@ export class AuthService {
 
   async createUser(userDto: CreateUserDto): Promise<AccessTokenType> {
     const { password } = userDto;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    userDto.password = hashedPassword;
+    userDto.password = await hashPassword(password);
     const user = await this.usersService.create(userDto);
     const token = await this.genJwtToken({
       id: user.id,
-      role: 'user',
+      role: USER_TYPE.USER,
     });
     return { token };
   }
 
   async createAdmin(adminDto: CreateHolderDto): Promise<AccessTokenType> {
     const { password } = adminDto;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    adminDto.password = hashedPassword;
+    adminDto.password = await hashPassword(password);
     const admin = await this.holdersService.create(adminDto);
     const token = await this.genJwtToken({
       id: admin.id,
-      role: 'admin',
+      role: USER_TYPE.ADMIN,
     });
     return { token };
   }
@@ -49,11 +48,11 @@ export class AuthService {
     const { username, password } = userDto;
     const user = await this.usersService.findByUsername(username);
     if (!user) throw new BadRequestException('Invalid username or password');
-    const match = await bcrypt.compare(password, user.password);
+    const match = await isHashMatch(password, user.password);
     if (!match) throw new BadRequestException('Invalid username or password');
     const token = await this.genJwtToken({
       id: user.id,
-      role: 'user',
+      role: USER_TYPE.USER,
     });
     return { token };
   }
@@ -61,12 +60,12 @@ export class AuthService {
     const { username, password } = adminDto;
     const admin = await this.holdersService.findByName(username);
     if (!admin) throw new BadRequestException('Invalid username or password');
-    const match = await bcrypt.compare(password, admin.password);
+    const match = await isHashMatch(password, admin.password);
     if (!match) throw new BadRequestException('Invaild username or password');
 
     const token = await this.genJwtToken({
       id: admin.id,
-      role: 'admin',
+      role: USER_TYPE.ADMIN,
     });
     return { token };
   }

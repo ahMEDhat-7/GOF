@@ -11,8 +11,8 @@ import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HoldersService } from './../holders/holders.service';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { USER_TYPE } from 'src/utils/constants';
+import { hashPassword } from 'src/utils/genHash';
 
 @Injectable()
 export class UsersService {
@@ -21,8 +21,6 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
     @Inject(forwardRef(() => HoldersService))
     private readonly holdersService: HoldersService,
-    private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
@@ -49,8 +47,21 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  /**
+   * get all users of specific holder
+   * @param h_id holder id
+   * @returns list of users
+   */
+  async findAll(h_id: string): Promise<User[]> {
+    return this.usersRepository.find({
+      where: { holder_id: h_id, role: USER_TYPE.USER },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        phoneNumber: true,
+      },
+    });
   }
 
   /**
@@ -70,8 +81,10 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<User> {
+    const { username, password } = dto;
     const user = await this.findOne(id);
-    this.usersRepository.merge(user, dto);
+    user.username = username ?? user.username;
+    user.password = password ? await hashPassword(password) : user.password;
     return this.usersRepository.save(user);
   }
 

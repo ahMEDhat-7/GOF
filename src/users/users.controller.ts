@@ -10,26 +10,26 @@ import {
   Headers,
   UseGuards,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { UserProfile } from './decorators/userProfile.decorator';
 import { JwtPayloadType } from 'src/utils/types';
+import { Roles } from './decorators/userRole.decorator';
+import { USER_TYPE } from 'src/utils/constants';
+import { RolesGuard } from './guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Roles(USER_TYPE.ADMIN, USER_TYPE.SUPER)
+  @UseGuards(RolesGuard)
+  findAll(@UserProfile() payload: JwtPayloadType) {
+    return this.usersService.findAll(payload.id);
   }
 
   @Get('/dashboard')
@@ -40,15 +40,18 @@ export class UsersController {
     return user;
   }
 
-  @Patch(':id')
+  @Patch()
+  @UseGuards(AuthGuard)
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @UserProfile() payload: JwtPayloadType,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(payload.id, updateUserDto);
   }
 
   @Delete(':id')
+  @Roles(USER_TYPE.ADMIN, USER_TYPE.USER)
+  @UseGuards(RolesGuard)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
