@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -13,6 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { HoldersService } from './../holders/holders.service';
 import { USER_TYPE } from 'src/utils/constants';
 import { hashPassword } from 'src/utils/genHash';
+import { JwtPayloadType } from 'src/utils/types';
 
 @Injectable()
 export class UsersService {
@@ -88,10 +90,25 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.usersRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`User with ID "${id}" not found`);
+  /**
+   * delete user by id if it's user itself of admin
+   * @param id user id
+   * @param payload jwt token
+   */
+  async remove(id: string, payload: JwtPayloadType): Promise<void> {
+    const user = await this.findOne(id);
+    if (
+      (payload.role === USER_TYPE.ADMIN && user.holder_id === payload.id) ||
+      payload.id === id
+    ) {
+      const result = await this.usersRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException(`User with ID "${id}" not found`);
+      }
+    } else {
+      throw new ForbiddenException(
+        'Access denied, You are not allowed to delete this user',
+      );
     }
   }
 }

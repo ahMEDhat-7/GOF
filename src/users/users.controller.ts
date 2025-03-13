@@ -35,7 +35,6 @@ export class UsersController {
   @Get('/dashboard')
   @UseGuards(AuthGuard)
   findOne(@UserProfile() payload: JwtPayloadType) {
-    console.log(payload);
     const user = this.usersService.findOne(payload.id);
     return user;
   }
@@ -52,7 +51,10 @@ export class UsersController {
   @Delete(':id')
   @Roles(USER_TYPE.ADMIN, USER_TYPE.USER)
   @UseGuards(RolesGuard)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.remove(id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UserProfile() payload: JwtPayloadType,
+  ) {
+    return this.usersService.remove(id, payload);
   }
 }

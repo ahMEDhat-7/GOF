@@ -36,10 +36,7 @@ export class RolesGuard implements CanActivate {
             secret: this.configService.get('JWT_SECRET'),
           },
         );
-        if (
-          (payload.role === USER_TYPE.USER && req.params.id === payload.id) ||
-          payload.role === USER_TYPE.ADMIN
-        ) {
+        if (roles.includes(payload.role)) {
           req[CURRENT_USER_KEY] = payload;
           return true;
         }
