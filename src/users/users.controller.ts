@@ -1,16 +1,12 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
   ParseUUIDPipe,
-  Headers,
   UseGuards,
-  Req,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,7 +31,7 @@ export class UsersController {
   @Get('/dashboard')
   @UseGuards(AuthGuard)
   findOne(@UserProfile() payload: JwtPayloadType) {
-    const user = this.usersService.findOne(payload.id);
+    const user = this.usersService.UserProfile(payload.id);
     return user;
   }
 

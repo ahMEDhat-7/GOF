@@ -15,6 +15,8 @@ import { HoldersService } from './../holders/holders.service';
 import { USER_TYPE } from 'src/utils/constants';
 import { hashPassword } from 'src/utils/genHash';
 import { JwtPayloadType } from 'src/utils/types';
+import { UserProfile } from './decorators/userProfile.decorator';
+import { Holder } from 'src/holders/entities/holders.entity';
 
 @Injectable()
 export class UsersService {
@@ -57,12 +59,6 @@ export class UsersService {
   async findAll(h_id: string): Promise<User[]> {
     return this.usersRepository.find({
       where: { holder_id: h_id, role: USER_TYPE.USER },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-      },
     });
   }
 
@@ -74,6 +70,14 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User not found`);
+    return user;
+  }
+
+  async UserProfile(id: string) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException(`User not found`);
+    // const holder = await this.holdersService.findOne(user.holder_id);
+
     return user;
   }
 

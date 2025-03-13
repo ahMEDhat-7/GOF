@@ -9,10 +9,12 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Holder } from '../../holders/entities/holders.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('Users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
+  @Exclude()
   id: string;
 
   @Column({ type: 'varchar', length: 50 })
@@ -22,18 +24,22 @@ export class User {
   email: string;
 
   @Column({ type: 'uuid' })
+  @Exclude()
   holder_id: string;
 
   @Column({ type: 'varchar', length: 255 })
+  @Exclude()
   password: string;
 
   @Column({ type: 'varchar', length: 11, unique: true })
   phoneNumber: string;
 
   @Column({ type: 'enum', enum: ['user', 'super'], default: 'user' })
+  @Exclude()
   role: 'user' | 'super';
 
   @CreateDateColumn({ type: 'timestamp', default: () => CURRENT_TIMESTAMP })
+  @Exclude()
   createdAt: Date;
 
   @UpdateDateColumn({
@@ -41,6 +47,7 @@ export class User {
     default: () => CURRENT_TIMESTAMP,
     onUpdate: CURRENT_TIMESTAMP,
   })
+  @Exclude()
   updatedAt: Date;
 
   @ManyToOne(() => Holder, (holder) => holder.users, { onDelete: 'CASCADE' })
