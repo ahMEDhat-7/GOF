@@ -10,12 +10,12 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from './guards/auth.guard';
-import { UserProfile } from './decorators/userProfile.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+import { UserPayload } from 'src/decorators/userPayload.decorator';
 import { JwtPayloadType } from 'src/utils/types';
-import { Roles } from './decorators/userRole.decorator';
+import { Roles } from '../decorators/userRole.decorator';
 import { USER_TYPE } from 'src/utils/constants';
-import { RolesGuard } from './guards/roles.guard';
+import { RolesGuard } from '../guards/roles.guard';
 import { UsersProvider } from './users.provider';
 
 @Controller('users')
@@ -28,13 +28,13 @@ export class UsersController {
   @Get()
   @Roles(USER_TYPE.ADMIN)
   @UseGuards(RolesGuard)
-  findAll(@UserProfile() payload: JwtPayloadType) {
+  findAll(@UserPayload() payload: JwtPayloadType) {
     return this.usersService.findAll(payload.id);
   }
 
   @Get('/dashboard')
   @UseGuards(AuthGuard)
-  findOne(@UserProfile() payload: JwtPayloadType) {
+  findOne(@UserPayload() payload: JwtPayloadType) {
     const user = this.usersProvider.UserProfile(payload.id);
     return user;
   }
@@ -42,7 +42,7 @@ export class UsersController {
   @Patch()
   @UseGuards(AuthGuard)
   update(
-    @UserProfile() payload: JwtPayloadType,
+    @UserPayload() payload: JwtPayloadType,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(payload.id, updateUserDto);
@@ -53,7 +53,7 @@ export class UsersController {
   @UseGuards(RolesGuard)
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @UserProfile() payload: JwtPayloadType,
+    @UserPayload() payload: JwtPayloadType,
   ) {
     return this.usersService.remove(id, payload);
   }
