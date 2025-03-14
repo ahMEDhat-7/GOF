@@ -17,7 +17,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(userDto: CreateUserDto): Promise<AccessTokenType> {
+  async registerUser(userDto: CreateUserDto): Promise<AccessTokenType> {
     const { password } = userDto;
     userDto.password = await hashPassword(password);
     const user = await this.usersService.create(userDto);
@@ -28,7 +28,7 @@ export class AuthService {
     return { token };
   }
 
-  async createAdmin(adminDto: CreateHolderDto): Promise<AccessTokenType> {
+  async registerAdmin(adminDto: CreateHolderDto): Promise<AccessTokenType> {
     const { password } = adminDto;
     adminDto.password = await hashPassword(password);
     const admin = await this.holdersService.create(adminDto);
@@ -44,7 +44,7 @@ export class AuthService {
    * @param userDto data to login
    * @returns JWT (access token)
    */
-  async findUser(userDto: loginDto): Promise<AccessTokenType> {
+  async loginUser(userDto: loginDto): Promise<AccessTokenType> {
     const { username, password } = userDto;
     const user = await this.usersService.findByUsername(username);
     if (!user) throw new BadRequestException('Invalid username or password');
@@ -56,7 +56,7 @@ export class AuthService {
     });
     return { token };
   }
-  async findAdmin(adminDto: loginDto): Promise<AccessTokenType> {
+  async loginAdmin(adminDto: loginDto): Promise<AccessTokenType> {
     const { username, password } = adminDto;
     const admin = await this.holdersService.findByName(username);
     if (!admin) throw new BadRequestException('Invalid username or password');

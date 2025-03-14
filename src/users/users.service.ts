@@ -15,9 +15,6 @@ import { HoldersService } from './../holders/holders.service';
 import { USER_TYPE } from 'src/utils/constants';
 import { hashPassword } from 'src/utils/genHash';
 import { JwtPayloadType } from 'src/utils/types';
-import { UserProfile } from './decorators/userProfile.decorator';
-import { Holder } from 'src/holders/entities/holders.entity';
-
 @Injectable()
 export class UsersService {
   constructor(

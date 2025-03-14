@@ -16,13 +16,17 @@ import { JwtPayloadType } from 'src/utils/types';
 import { Roles } from './decorators/userRole.decorator';
 import { USER_TYPE } from 'src/utils/constants';
 import { RolesGuard } from './guards/roles.guard';
+import { UsersProvider } from './users.provider';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly usersProvider: UsersProvider,
+  ) {}
 
   @Get()
-  @Roles(USER_TYPE.ADMIN, USER_TYPE.SUPER)
+  @Roles(USER_TYPE.ADMIN)
   @UseGuards(RolesGuard)
   findAll(@UserProfile() payload: JwtPayloadType) {
     return this.usersService.findAll(payload.id);
@@ -31,7 +35,7 @@ export class UsersController {
   @Get('/dashboard')
   @UseGuards(AuthGuard)
   findOne(@UserProfile() payload: JwtPayloadType) {
-    const user = this.usersService.UserProfile(payload.id);
+    const user = this.usersProvider.UserProfile(payload.id);
     return user;
   }
 
