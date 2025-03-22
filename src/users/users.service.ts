@@ -20,7 +20,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-    @Inject(forwardRef(() => HoldersService))
+    // @Inject(forwardRef(() => HoldersService))
     private readonly holdersService: HoldersService,
   ) {}
 
@@ -31,19 +31,12 @@ export class UsersService {
         `Holder with ID "${dto.holder_id}" not found`,
       );
     }
-    const userExt = await this.usersRepository.findOne({
-      where: [
-        { username: dto.username },
-        { email: dto.email },
-        { phoneNumber: dto.phoneNumber },
-      ],
-    });
+    const userExt = await this.findByUsername(dto.username, dto.holder_id);
     if (userExt) {
       throw new BadRequestException(
         `User with username "${dto.username}" or email "${dto.email}" already exists`,
       );
     }
-
     const user = this.usersRepository.create(dto);
     return this.usersRepository.save(user);
   }
@@ -73,13 +66,13 @@ export class UsersService {
   async UserProfile(id: string) {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User not found`);
-    // const holder = await this.holdersService.findOne(user.holder_id);
-
     return user;
   }
 
-  async findByUsername(username: string) {
-    const user = await this.usersRepository.findOne({ where: { username } });
+  async findByUsername(username: string, holder_id: string) {
+    const user = await this.usersRepository.findOne({
+      where: { username, holder_id },
+    });
     return user;
   }
 

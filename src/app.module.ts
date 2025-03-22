@@ -15,7 +15,15 @@ import { OrderItemsModule } from './order-items/order-items.module';
 import { MenusModule } from './menus/menus.module';
 import { MenuItemsModule } from './menu-items/menu-items.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { Group } from './groups/entities/group.entity';
+import { GroupMember } from './group-members/entities/group-member.entity';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './order-items/entities/order-item.entity';
+import { Menu } from './menus/entities/menu.entity';
+import { MenuItem } from './menu-items/entities/menu-item.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -29,7 +37,17 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
           password: config.get<string>('DB_PASSWORD'),
           host: config.get<string>('DB_HOST'),
           port: config.get<number>('DB_PORT'),
-          entities: [Holder, User],
+          entities: [
+            Holder,
+            User,
+            Restaurant,
+            Group,
+            GroupMember,
+            Order,
+            OrderItem,
+            Menu,
+            MenuItem,
+          ],
         };
       },
     }),

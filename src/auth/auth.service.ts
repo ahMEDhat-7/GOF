@@ -3,7 +3,8 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { HoldersService } from 'src/holders/holders.service';
 import { CreateHolderDto } from './../holders/dtos/create-holder.dto';
-import { loginDto } from './dto/login.dto';
+import { LoginAdminDto } from './dto/login-admin.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadType, AccessTokenType } from '../utils/types';
 import { USER_TYPE } from 'src/utils/constants';
@@ -23,6 +24,7 @@ export class AuthService {
     const user = await this.usersService.create(userDto);
     const token = await this.genJwtToken({
       id: user.id,
+      c_id: userDto.holder_id,
       role: USER_TYPE.USER,
     });
     return { token };
@@ -34,6 +36,7 @@ export class AuthService {
     const admin = await this.holdersService.create(adminDto);
     const token = await this.genJwtToken({
       id: admin.id,
+      c_id: '#',
       role: USER_TYPE.ADMIN,
     });
     return { token };
@@ -44,19 +47,20 @@ export class AuthService {
    * @param userDto data to login
    * @returns JWT (access token)
    */
-  async loginUser(userDto: loginDto): Promise<AccessTokenType> {
-    const { username, password } = userDto;
-    const user = await this.usersService.findByUsername(username);
+  async loginUser(userDto: LoginUserDto): Promise<AccessTokenType> {
+    const { username, password, holder_id } = userDto;
+    const user = await this.usersService.findByUsername(username, holder_id);
     if (!user) throw new BadRequestException('Invalid username or password');
     const match = await isHashMatch(password, user.password);
     if (!match) throw new BadRequestException('Invalid username or password');
     const token = await this.genJwtToken({
       id: user.id,
+      c_id: userDto.holder_id,
       role: USER_TYPE.USER,
     });
     return { token };
   }
-  async loginAdmin(adminDto: loginDto): Promise<AccessTokenType> {
+  async loginAdmin(adminDto: LoginAdminDto): Promise<AccessTokenType> {
     const { username, password } = adminDto;
     const admin = await this.holdersService.findByName(username);
     if (!admin) throw new BadRequestException('Invalid username or password');
@@ -65,6 +69,7 @@ export class AuthService {
 
     const token = await this.genJwtToken({
       id: admin.id,
+      c_id: '#',
       role: USER_TYPE.ADMIN,
     });
     return { token };

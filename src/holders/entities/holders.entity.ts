@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 
 @Entity({ name: 'Holders' })
 @Unique(['name'])
@@ -42,4 +43,7 @@ export class Holder {
 
   @OneToMany(() => User, (user) => user.holder)
   users: User[];
+
+  @OneToMany(() => Restaurant, (restaurant) => restaurant.created_by)
+  restaurants: Restaurant[];
 }
