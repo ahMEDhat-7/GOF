@@ -1,69 +1,65 @@
-# React + TypeScript + Vite
+Group Ordering Food Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An innovative platform designed to simplify the process of ordering food for groups through collaborative, efficient, and automated ordering experiences.
 
-Currently, two official plugins are available:
+Show Image
+🚀 Overview
+Group Ordering Food streamlines the complex process of coordinating food orders for multiple people. Whether it's for family gatherings, office lunches, or social events, our platform eliminates the chaos of collecting individual preferences, managing payments, and coordinating deliveries.
+Key Benefits
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+75% reduction in time spent coordinating group orders
+Seamless payment splitting with multiple payment options
+Dietary restriction management with automatic filtering
+Real-time order tracking for all participants
+Collaborative decision making through in-app communication
 
-## Expanding the ESLint configuration
+✨ Features
+🔐 User Management
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Role-based access control (User/Super Admin)
+Secure authentication with optional two-factor authentication
+Profile customization with dietary preferences and restrictions
+Multiple payment method storage
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+🏪 Restaurant Management
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Admin-controlled restaurant onboarding with comprehensive profiles
+Dynamic menu management with real-time updates
+Order dashboard for restaurant partners
+Performance analytics and reporting
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+👥 Group Management
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Easy group creation associated with specific restaurants
+Multiple group statuses (running, pending, completed, cancelled)
+Flexible invitation system via email, SMS, or social sharing
+In-app communication for group coordination
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+📋 Order Management
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Individual order placement within group context
+Comprehensive order tracking (pending, confirmed, arrived, cancelled)
+Order modification capabilities with time-bound restrictions
+Automated status notifications for all participants
+
+🍽️ Menu Customization
+
+Item customization options (size, toppings, preparation preferences)
+Dietary restriction filtering with allergen information
+Personalized recommendations based on order history
+Special instruction handling for individual requirements
+
+🎨 Design Philosophy
+Our platform features a light, comfortable design optimized for extended use:
+
+Food-inspired color palette with warm, appetizing tones
+Clean typography and generous white space
+Subtle visual elements that don't strain the eyes
+Mobile-first responsive design for all device types
+
+Frontend
+
+React.js with modern hooks and context API
+Tailwind CSS for utility-first styling
+React Query for efficient data fetching
+Socket.io for real-time updates
