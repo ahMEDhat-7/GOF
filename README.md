@@ -1,8 +1,3 @@
-Group Ordering Food Platform
-
-An innovative platform designed to simplify the process of ordering food for groups through collaborative, efficient, and automated ordering experiences.
-
-Show Image
 🚀 Overview
 Group Ordering Food streamlines the complex process of coordinating food orders for multiple people. Whether it's for family gatherings, office lunches, or social events, our platform eliminates the chaos of collecting individual preferences, managing payments, and coordinating deliveries.
 Key Benefits
